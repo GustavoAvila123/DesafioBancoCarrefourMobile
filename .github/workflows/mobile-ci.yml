@@ -12,68 +12,68 @@ jobs:
   ios:
     runs-on: macos-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
     
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
     
-    - name: Install Xcode dependencies
-      run: |
-        brew update
-        brew install libimobiledevice ideviceinstaller
+      - name: Install Xcode dependencies
+        run: |
+          brew update
+          brew install libimobiledevice ideviceinstaller
     
-    - name: Install Xcode Command Line Tools
-      run: xcode-select --install
+      - name: Install Xcode Command Line Tools
+        run: xcode-select --install
     
-    - name: Set executable permissions
-      run: chmod +x ./path/to/your.app  # Altere o caminho para o seu app
+      - name: Set executable permissions
+        run: chmod +x ./path/to/your.app  # Altere o caminho para o seu app
     
-    - name: Debug App Path
-      run: echo "App Path: ./path/to/your.app"
+      - name: Debug App Path
+        run: echo "App Path: ./path/to/your.app"
     
-    - name: Run iOS Tests
-      run: npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
+      - name: Run iOS Tests
+        run: npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
     
   android:
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
     
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
     
-    - name: Install Appium globally
-      run: npm install -g appium
+      - name: Install Appium globally
+        run: npm install -g appium
     
-    - name: Set up Android SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y android-sdk
-        echo "no" | sdkmanager --update
-        sdkmanager "platform-tools" "tools" "build-tools;29.0.2" "platforms;android-29"
-        export ANDROID_HOME=$HOME/Android/Sdk
-        export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+      - name: Set up Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y android-sdk
+          echo "no" | sdkmanager --update
+          sdkmanager "platform-tools" "tools" "build-tools;29.0.2" "platforms;android-29"
+          export ANDROID_HOME=$HOME/Android/Sdk
+          export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
     
-    - name: Verify Android SDK installation
-      run: sdkmanager --list
+      - name: Verify Android SDK installation
+        run: sdkmanager --list
     
-    - name: Set up Android Emulator
-      run: |
-        echo "no" | avdmanager create avd --force -n test -k "system-images;android-29;google_apis;x86_64"
-        emulator -avd test -no-window -gpu off &
-        sleep 60  # Espera o emulador iniciar
+      - name: Set up Android Emulator
+        run: |
+          echo "no" | avdmanager create avd --force -n test -k "system-images;android-29;google_apis;x86_64"
+          emulator -avd test -no-window -gpu off &
+          sleep 60  # Espera o emulador iniciar
     
-    - name: Run Android Tests
-      run: npx appium --platform-name Android --app ./path/to/your.apk --device-name "Android Emulator"
+      - name: Run Android Tests
+        run: npx appium --platform-name Android --app ./path/to/your.apk --device-name "Android Emulator"
