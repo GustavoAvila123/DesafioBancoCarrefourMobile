@@ -31,12 +31,6 @@ jobs:
       - name: Install Xcode Command Line Tools
         run: xcode-select --install
     
-      - name: Set executable permissions
-        run: chmod +x ./path/to/your.app  # Altere o caminho para o seu app
-    
-      - name: Debug App Path
-        run: echo "App Path: ./path/to/your.app"
-    
       - name: Run iOS Tests
         run: npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
     
