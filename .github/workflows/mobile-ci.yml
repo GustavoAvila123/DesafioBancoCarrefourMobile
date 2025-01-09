@@ -31,7 +31,7 @@ jobs:
       - name: Install Xcode dependencies
         run: |
           brew update
-          brew install libimobiledevice ios-deploy cocoapods
+          brew install --formula cocoapods
           pod setup
 
       - name: Configure Xcode Command Line Tools
