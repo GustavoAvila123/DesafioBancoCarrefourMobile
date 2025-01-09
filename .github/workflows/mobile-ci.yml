@@ -26,26 +26,25 @@ jobs:
       - name: Install Xcode dependencies
         run: |
           brew update
-          brew install carthage libimobiledevice ios-deploy cocoapods
+          brew install libimobiledevice ios-deploy
+          brew install --formula cocoapods # Corrige o aviso de `--formula`
+          pod setup
 
       - name: Configure Xcode Command Line Tools
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Install Appium dependencies
+      - name: Install Appium Doctor
         run: |
           npm install -g appium-doctor
           appium-doctor --ios
 
-      - name: Print environment
-        run: printenv
-
       - name: Start iOS Simulator
-        run: xcrun simctl boot "iPhone Simulator"
+        run: xcrun simctl boot "iPhone 14" # Use um dispositivo específico listado em `xcrun simctl list devices`
 
       - name: Run iOS Tests
         run: |
           xcrun simctl list devices
-          npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
+          npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone 14"
 
   android:
     runs-on: ubuntu-22.04
@@ -69,12 +68,10 @@ jobs:
           echo "ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
           echo "PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" >> $GITHUB_ENV
           source $GITHUB_ENV
-
-      - name: Install Android SDK Tools
-        run: |
           sudo apt-get update
           sudo apt-get install -y android-sdk
-          echo "no" | sdkmanager --update
+          echo "no" | sdkmanager --licenses
+          sdkmanager --update
           sdkmanager "platform-tools" "build-tools;29.0.2" "platforms;android-29"
 
       - name: Create Android Emulator
