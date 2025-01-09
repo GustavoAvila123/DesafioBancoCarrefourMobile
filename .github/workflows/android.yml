@@ -61,9 +61,9 @@ jobs:
 
     # Define variáveis de ambiente para BrowserStack
     - name: Set BrowserStack credentials
-      env:
-        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-        BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      run: |
+        export BROWSERSTACK_USERNAME=${{ secrets.BROWSERSTACK_USERNAME }}
+        export BROWSERSTACK_ACCESS_KEY=${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
     # Executa o build com Gradle
     - name: Build Android App
