@@ -12,15 +12,18 @@ jobs:
   ios:
     runs-on: macos-latest
     steps:
-      - name: Checkout Repository
+
+      - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run iOS Tests
         run: |
-          echo "Starting iOS Simulator"
+          echo "Booting iOS Simulator"
           xcrun simctl boot "iPhone 14" || true
           sleep 30
           echo "Running iOS Tests"
@@ -29,8 +32,11 @@ jobs:
   android:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Repository
+
+      - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Install dependencies
         run: npm ci
@@ -40,7 +46,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y android-sdk
           echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" >> $GITHUB_ENV
           sdkmanager --install "platform-tools" "build-tools;31.0.0" "platforms;android-31" "system-images;android-31;google_apis;x86_64"
           sdkmanager --licenses
 
