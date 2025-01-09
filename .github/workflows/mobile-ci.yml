@@ -31,11 +31,21 @@ jobs:
       - name: Configure Xcode Command Line Tools
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Ensure permissions for Appium
-        run: chmod +x $(npm bin)/appium
+      - name: Install Appium dependencies
+        run: |
+          npm install -g appium-doctor
+          appium-doctor --ios
+
+      - name: Print environment
+        run: printenv
+
+      - name: Start iOS Simulator
+        run: xcrun simctl boot "iPhone Simulator"
 
       - name: Run iOS Tests
-        run: npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
+        run: |
+          xcrun simctl list devices
+          npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone Simulator"
 
   android:
     runs-on: ubuntu-22.04
@@ -54,10 +64,11 @@ jobs:
       - name: Install Appium globally
         run: npm install -g appium
 
-      - name: Set up Android SDK path
+      - name: Set up Android SDK
         run: |
-          echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" >> $GITHUB_ENV
+          source $GITHUB_ENV
 
       - name: Install Android SDK Tools
         run: |
