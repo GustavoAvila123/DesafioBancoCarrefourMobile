@@ -12,94 +12,45 @@ jobs:
   ios:
     runs-on: macos-latest
     steps:
-      - name: Configure Git
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
       - name: Install dependencies
-        run: npm install
-
-      - name: Install Xcode dependencies
-        run: |
-          brew update
-          brew install --formula cocoapods
-          pod setup
-
-      - name: Configure Xcode Command Line Tools
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-      - name: Install Appium Doctor
-        run: |
-          npm install -g appium-doctor
-          appium-doctor --ios
-
-      - name: Boot iOS Simulator
-        run: |
-          xcrun simctl boot "iPhone 14 Pro"
-
-      - name: List iOS Simulators
-        run: xcrun simctl list devices
+        run: npm ci
 
       - name: Run iOS Tests
         run: |
-          npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone 14 Pro"
+          echo "Starting iOS Simulator"
+          xcrun simctl boot "iPhone 14" || true
+          sleep 30
+          echo "Running iOS Tests"
+          npx appium --platform-name iOS --app ./path/to/your.app --device-name "iPhone 14"
 
   android:
     runs-on: ubuntu-22.04
     steps:
-      - name: Configure Git
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Set Android Environment
-        run: |
-          echo "ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Install Appium globally
-        run: npm install -g appium
-
-      - name: Install Android SDK Tools
+      - name: Set up Android SDK
         run: |
           sudo apt-get update
           sudo apt-get install -y android-sdk
-          echo "no" | sdkmanager --licenses
-          sdkmanager --update
-          sdkmanager "platform-tools" "build-tools;33.0.0" "platforms;android-33" "system-images;android-33;google_apis;x86_64"
-
-      - name: Create Android Emulator
-        run: echo "no" | avdmanager create avd --force -n test -k "system-images;android-33;google_apis;x86_64"
+          echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+          sdkmanager --install "platform-tools" "build-tools;31.0.0" "platforms;android-31" "system-images;android-31;google_apis;x86_64"
+          sdkmanager --licenses
 
       - name: Start Android Emulator
         run: |
+          echo "no" | avdmanager create avd --force -n test -k "system-images;android-31;google_apis;x86_64"
           emulator -avd test -no-window -gpu off &
           sleep 60
 
-      - name: List Android Emulators
-        run: emulator -list-avds
-
       - name: Run Android Tests
         run: |
+          echo "Running Android Tests"
           npx appium --platform-name Android --app ./path/to/your.apk --device-name "Android Emulator"
